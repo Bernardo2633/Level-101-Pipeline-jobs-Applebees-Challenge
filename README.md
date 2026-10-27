@@ -9,7 +9,7 @@ This repository contains a Databricks pipeline for fraud detection in Applebees 
 ## Quick Access Links
 
 - **Pipeline Notebook:**  
-  [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/jobs/939665523087168?o=7474644077067624)
+  [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/editor/notebooks/1977624990523801?o=7474644077067624)
 
 - **Main Job:**  
   [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/jobs/939665523087168?o=7474644077067624)
