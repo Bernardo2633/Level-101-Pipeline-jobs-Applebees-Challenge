@@ -9,6 +9,15 @@ variables:
   job_name:
     description: "Nombre del job del pipeline de deteccion de fraude"
     default: "Applebees Fraud Detection Pipeline"
+  warehouse_id:
+    description: "SQL Warehouse para ejecutar los queries del dashboard"
+    lookup:
+      warehouse: "Serverless Starter Warehouse"
+
+sync:
+  # Excluir el dashboard del sync para evitar duplicados al usar Git support
+  exclude:
+    - src/*.lvdash.json
 
 targets:
   dev:

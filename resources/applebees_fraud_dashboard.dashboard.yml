@@ -1,0 +1,6 @@
+resources:
+  dashboards:
+    applebees_fraud_dashboard:
+      display_name: "Applebees Fraud Monitoring Dashboard"
+      warehouse_id: ${var.warehouse_id}
+      file_path: ../src/applebees_fraud_dashboard.lvdash.json

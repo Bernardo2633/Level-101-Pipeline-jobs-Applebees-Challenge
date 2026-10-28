@@ -1,0 +1,1659 @@
+{
+  "datasets": [
+    {
+      "name": "voids_by_employee",
+      "displayName": "Voids By Employee",
+      "queryLines": [
+        "SELECT\n",
+        "  employee_id,\n",
+        "  location_id,\n",
+        "  location_name,\n",
+        "  location_status,\n",
+        "  items_voided AS `Items Voided`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  precio_prom_void AS `Avg Void Price`,\n",
+        "  checks_afectados AS `Checks Affected`,\n",
+        "  total_items_vendidos AS `Total Items Sold`,\n",
+        "  total_vendido AS `Total Sold`,\n",
+        "  pct_void_rate AS `Void Rate`\n",
+        "FROM\n",
+        "  fraud_voids_by_employee"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "risk_score",
+      "displayName": "Fraud Risk Score",
+      "queryLines": [
+        "SELECT\n",
+        "  employee_id,\n",
+        "  location_id,\n",
+        "  pct_void_rate AS `Void Rate`,\n",
+        "  pct_free AS `Free Item Rate`,\n",
+        "  checks_con_espejo AS `Mirror Checks`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  night_voids AS `Night Voids`,\n",
+        "  flag_void_rate AS `Flag Void Rate`,\n",
+        "  flag_free_nc AS `Flag Free Items`,\n",
+        "  flag_espejo AS `Flag Mirror`,\n",
+        "  flag_monto AS `Flag Amount`,\n",
+        "  flag_night_voids AS `Flag Night Voids`,\n",
+        "  risk_score,\n",
+        "  CASE nivel_riesgo\n",
+        "    WHEN 'CRITICO' THEN 'CRITICAL'\n",
+        "    WHEN 'ALTO' THEN 'HIGH'\n",
+        "    WHEN 'MEDIO' THEN 'MEDIUM'\n",
+        "    WHEN 'BAJO' THEN 'LOW'\n",
+        "  END AS `Risk Level`\n",
+        "FROM\n",
+        "  fraud_risk_score\n",
+        "ORDER BY\n",
+        "  risk_score DESC"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "checks_most_voids",
+      "displayName": "Checks With Most Voids",
+      "queryLines": [
+        "SELECT\n",
+        "  check_id,\n",
+        "  location_id,\n",
+        "  employee_id,\n",
+        "  items_voided AS `Items Voided`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  primera_orden AS `First Order`,\n",
+        "  ultima_orden AS `Last Order`\n",
+        "FROM\n",
+        "  fraud_checks_most_voids\n",
+        "ORDER BY\n",
+        "  items_voided DESC"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "weekly_summary",
+      "displayName": "Fraud Weekly Summary",
+      "queryLines": [
+        "SELECT\n",
+        "  semana_inicio AS `Week Start`,\n",
+        "  semana_fin AS `Week End`,\n",
+        "  total_items_voided AS `Items Voided`,\n",
+        "  total_checks_afectados AS `Checks Affected`,\n",
+        "  empleados_con_voids AS `Employees With Voids`,\n",
+        "  locaciones_con_voids AS `Locations With Voids`,\n",
+        "  valor_total_voided AS `Total Voided Value`,\n",
+        "  valor_prom_void AS `Avg Void Value`,\n",
+        "  valor_max_void AS `Max Void Value`,\n",
+        "  total_items_vendidos AS `Items Sold`,\n",
+        "  total_ventas AS `Total Sales`,\n",
+        "  total_checks_semana AS `Total Checks`,\n",
+        "  locaciones_activas AS `Active Locations`,\n",
+        "  pct_void_vs_ventas AS `Void Pct of Sales`,\n",
+        "  pct_void_rate AS `Void Rate`,\n",
+        "  top_empleado_voids AS `Top Employee Voids`,\n",
+        "  top_empleado_locacion AS `Top Employee Location`,\n",
+        "  top_empleado_valor AS `Top Employee Value`,\n",
+        "  top_locacion_voids AS `Top Location Voids`,\n",
+        "  top_locacion_valor AS `Top Location Value`\n",
+        "FROM\n",
+        "  fraud_weekly_summary"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "free_items_suspicious",
+      "displayName": "Suspicious Free Items",
+      "queryLines": [
+        "SELECT\n",
+        "  check_id,\n",
+        "  location_name,\n",
+        "  location_status,\n",
+        "  total_items AS `Total Items`,\n",
+        "  free_items AS `Free Items`,\n",
+        "  pct_free_items AS `Free Items Pct`,\n",
+        "  q1_free AS `Q1 Free`,\n",
+        "  q3_free AS `Q3 Free`,\n",
+        "  iqr_free AS `IQR`,\n",
+        "  umbral_iqr AS `IQR Threshold`\n",
+        "FROM\n",
+        "  fraud_free_items_suspicious\n",
+        "ORDER BY\n",
+        "  pct_free_items DESC"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "voids_by_location",
+      "displayName": "Voids By Location",
+      "queryLines": [
+        "SELECT\n",
+        "  location_id,\n",
+        "  location_name,\n",
+        "  status,\n",
+        "  items_voided AS `Items Voided`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  checks_afectados AS `Checks Affected`,\n",
+        "  total_items_vendidos AS `Total Items Sold`,\n",
+        "  total_ventas AS `Total Sales`,\n",
+        "  pct_void_rate AS `Void Rate`\n",
+        "FROM\n",
+        "  fraud_voids_by_location"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "voids_vs_sold",
+      "displayName": "Voids vs Sold (Mirror Pattern)",
+      "queryLines": [
+        "SELECT\n",
+        "  check_id,\n",
+        "  location_id,\n",
+        "  employee_id,\n",
+        "  items_voided AS `Items Voided`,\n",
+        "  items_vendidos AS `Items Sold`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  valor_vendido AS `Sold Value`,\n",
+        "  pct_void_rate AS `Void Rate`,\n",
+        "  items_espejo AS `Mirror Items`,\n",
+        "  flag_patron_espejo AS `Mirror Pattern`\n",
+        "FROM\n",
+        "  fraud_voids_vs_sold\n",
+        "ORDER BY\n",
+        "  items_espejo DESC"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "voids_by_hour",
+      "displayName": "Voids By Hour",
+      "queryLines": [
+        "SELECT\n",
+        "  hora AS `Hour`,\n",
+        "  items_voided AS `Items Voided`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  checks_afectados AS `Checks Affected`,\n",
+        "  total_items_hora AS `Items Sold`,\n",
+        "  total_ventas_hora AS `Sales`,\n",
+        "  pct_void_rate AS `Void Rate`\n",
+        "FROM\n",
+        "  fraud_voids_by_hour"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "top_voided_items",
+      "displayName": "Top Voided Items",
+      "queryLines": [
+        "SELECT\n",
+        "  item_name AS `Item`,\n",
+        "  item_subcategory AS `Subcategory`,\n",
+        "  veces_voided AS `Times Voided`,\n",
+        "  valor_voided AS `Voided Value`,\n",
+        "  precio_prom AS `Avg Price`,\n",
+        "  veces_vendido AS `Times Sold`,\n",
+        "  valor_vendido AS `Sold Value`,\n",
+        "  pct_void_rate AS `Void Rate`\n",
+        "FROM\n",
+        "  fraud_top_voided_items"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    },
+    {
+      "name": "pipeline_log",
+      "displayName": "Pipeline Run Log",
+      "queryLines": [
+        "SELECT\n",
+        "  run_id,\n",
+        "  run_timestamp,\n",
+        "  status,\n",
+        "  queries_executed\n",
+        "FROM\n",
+        "  fraud_pipeline_run_log\n",
+        "ORDER BY\n",
+        "  run_id DESC"
+      ],
+      "catalog": "workspace",
+      "schema": "pipe"
+    }
+  ],
+  "relationshipGraphs": [
+    {
+      "sources": [
+        {
+          "name": "Voids_By_Employee",
+          "datasetName": "voids_by_employee"
+        },
+        {
+          "name": "Fraud_Risk_Score",
+          "datasetName": "risk_score"
+        },
+        {
+          "name": "Checks_With_Most_Voids",
+          "datasetName": "checks_most_voids"
+        },
+        {
+          "name": "Fraud_Weekly_Summary",
+          "datasetName": "weekly_summary"
+        },
+        {
+          "name": "Suspicious_Free_Items",
+          "datasetName": "free_items_suspicious"
+        },
+        {
+          "name": "Voids_By_Location",
+          "datasetName": "voids_by_location"
+        },
+        {
+          "name": "Voids_vs_Sold_Mirror_Pattern",
+          "datasetName": "voids_vs_sold"
+        },
+        {
+          "name": "Voids_By_Hour",
+          "datasetName": "voids_by_hour"
+        },
+        {
+          "name": "Top_Voided_Items",
+          "datasetName": "top_voided_items"
+        },
+        {
+          "name": "Pipeline_Run_Log",
+          "datasetName": "pipeline_log"
+        }
+      ],
+      "relationships": [
+        {
+          "name": "relationship_0",
+          "from": "Voids_vs_Sold_Mirror_Pattern",
+          "to": "Fraud_Risk_Score",
+          "on": "`Voids_vs_Sold_Mirror_Pattern`.`employee_id` = `Fraud_Risk_Score`.`employee_id` AND `Voids_vs_Sold_Mirror_Pattern`.`location_id` = `Fraud_Risk_Score`.`location_id`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_1",
+          "from": "Checks_With_Most_Voids",
+          "to": "Fraud_Risk_Score",
+          "on": "`Checks_With_Most_Voids`.`employee_id` = `Fraud_Risk_Score`.`employee_id` AND `Checks_With_Most_Voids`.`location_id` = `Fraud_Risk_Score`.`location_id`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_2",
+          "from": "Voids_By_Employee",
+          "to": "Fraud_Risk_Score",
+          "on": "`Voids_By_Employee`.`employee_id` = `Fraud_Risk_Score`.`employee_id` AND `Voids_By_Employee`.`location_id` = `Fraud_Risk_Score`.`location_id`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_3",
+          "from": "Fraud_Risk_Score",
+          "to": "Voids_By_Location",
+          "on": "`Fraud_Risk_Score`.`location_id` = `Voids_By_Location`.`location_id`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        },
+        {
+          "name": "relationship_4",
+          "from": "Suspicious_Free_Items",
+          "to": "Voids_vs_Sold_Mirror_Pattern",
+          "on": "`Suspicious_Free_Items`.`check_id` = `Voids_vs_Sold_Mirror_Pattern`.`check_id`",
+          "cardinality": "CARDINALITY_MANY_TO_ONE"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "a49c4a03",
+      "displayName": "Executive Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "counter_voided_value",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "sum(Fraud_Risk_Score__Voided Value)",
+                      "expression": "SUM(`Fraud_Risk_Score`.`Voided Value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total Voided Value",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Fraud_Risk_Score__Voided Value)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_high_risk",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "countdistinct(Fraud_Risk_Score__employee_id)",
+                      "expression": "COUNT(DISTINCT `Fraud_Risk_Score`.`employee_id`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`Fraud_Risk_Score`.`Risk Level` IN ('CRITICAL', 'HIGH')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "High-Risk Employees",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(Fraud_Risk_Score__employee_id)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_mirror",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "countdistinct(Voids_vs_Sold_Mirror_Pattern__check_id)",
+                      "expression": "COUNT(DISTINCT `Voids_vs_Sold_Mirror_Pattern`.`check_id`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Mirror Pattern` = 1"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Mirror Pattern Checks",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(Voids_vs_Sold_Mirror_Pattern__check_id)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_pipeline",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Pipeline_Run_Log__run_id)",
+                      "expression": "COUNT(`Pipeline_Run_Log`.`run_id`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Pipeline Runs",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(Pipeline_Run_Log__run_id)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "line_weekly_trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Fraud_Weekly_Summary__Week Start",
+                      "expression": "`Fraud_Weekly_Summary`.`Week Start`"
+                    },
+                    {
+                      "name": "sum(Fraud_Weekly_Summary__Total Voided Value)",
+                      "expression": "SUM(`Fraud_Weekly_Summary`.`Total Voided Value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Weekly Void Value Trend",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Fraud_Weekly_Summary__Week Start",
+                  "displayName": "Week Start",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Fraud_Weekly_Summary__Total Voided Value)",
+                  "displayName": "Total Voided Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 8,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_risk_distribution",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Fraud_Risk_Score__Risk Level",
+                      "expression": "`Fraud_Risk_Score`.`Risk Level`"
+                    },
+                    {
+                      "name": "countdistinct(Fraud_Risk_Score__employee_id)",
+                      "expression": "COUNT(DISTINCT `Fraud_Risk_Score`.`employee_id`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Risk Level Distribution",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Fraud_Risk_Score__Risk Level",
+                  "displayName": "Risk Level",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "custom-order",
+                      "orderedValues": [
+                        "CRITICAL",
+                        "HIGH",
+                        "MEDIUM",
+                        "LOW"
+                      ]
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "countdistinct(Fraud_Risk_Score__employee_id)",
+                  "displayName": "Employees",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Fraud_Risk_Score__Risk Level",
+                  "displayName": "Risk Level",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 3,
+            "width": 4,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_voids_by_hour",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Voids_By_Hour__Hour",
+                      "expression": "`Voids_By_Hour`.`Hour`"
+                    },
+                    {
+                      "name": "sum(Voids_By_Hour__Voided Value)",
+                      "expression": "SUM(`Voids_By_Hour`.`Voided Value`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Voids by Hour of Day",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Voids_By_Hour__Hour",
+                  "displayName": "Hour of Day",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Voids_By_Hour__Voided Value)",
+                  "displayName": "Voided Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Voids_By_Hour__Hour",
+                  "displayName": "Hour of Day",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_top_voided_items",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Top_Voided_Items__Item",
+                      "expression": "`Top_Voided_Items`.`Item`"
+                    },
+                    {
+                      "name": "sum(Top_Voided_Items__Voided Value)",
+                      "expression": "SUM(`Top_Voided_Items`.`Voided Value`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "SUM(`Top_Voided_Items`.`Voided Value`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Top Voided Items by Value",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Top_Voided_Items__Item",
+                  "displayName": "Item",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 15
+                    },
+                    "sort": {
+                      "by": "measure-reversed",
+                      "measure": {
+                        "fieldName": "sum(Top_Voided_Items__Voided Value)"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Top_Voided_Items__Voided Value)",
+                  "displayName": "Voided Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Top_Voided_Items__Item",
+                  "displayName": "Item",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 10,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "risk_analysis",
+      "displayName": "Risk Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "bar_voids_by_employee",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Voids_By_Employee__employee_id",
+                      "expression": "`Voids_By_Employee`.`employee_id`"
+                    },
+                    {
+                      "name": "sum(Voids_By_Employee__Voided Value)",
+                      "expression": "SUM(`Voids_By_Employee`.`Voided Value`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "SUM(`Voids_By_Employee`.`Voided Value`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Top Employees by Voided Value",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Voids_By_Employee__employee_id",
+                  "displayName": "Employee",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 15
+                    },
+                    "sort": {
+                      "by": "measure-reversed",
+                      "measure": {
+                        "fieldName": "sum(Voids_By_Employee__Voided Value)"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Voids_By_Employee__Voided Value)",
+                  "displayName": "Voided Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Voids_By_Employee__employee_id",
+                  "displayName": "Employee",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "bar_voids_by_location",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Voids_By_Location__location_name",
+                      "expression": "`Voids_By_Location`.`location_name`"
+                    },
+                    {
+                      "name": "sum(Voids_By_Location__Voided Value)",
+                      "expression": "SUM(`Voids_By_Location`.`Voided Value`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "SUM(`Voids_By_Location`.`Voided Value`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Top Locations by Voided Value",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Voids_By_Location__location_name",
+                  "displayName": "Location",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 15
+                    },
+                    "sort": {
+                      "by": "measure-reversed",
+                      "measure": {
+                        "fieldName": "sum(Voids_By_Location__Voided Value)"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Voids_By_Location__Voided Value)",
+                  "displayName": "Voided Value",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Voids_By_Location__location_name",
+                  "displayName": "Location",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "table_risk_score",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Fraud_Risk_Score__employee_id",
+                      "expression": "`Fraud_Risk_Score`.`employee_id`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__location_id",
+                      "expression": "`Fraud_Risk_Score`.`location_id`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Risk Level",
+                      "expression": "`Fraud_Risk_Score`.`Risk Level`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__risk_score",
+                      "expression": "`Fraud_Risk_Score`.`risk_score`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Void Rate",
+                      "expression": "`Fraud_Risk_Score`.`Void Rate`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Free Item Rate",
+                      "expression": "`Fraud_Risk_Score`.`Free Item Rate`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Mirror Checks",
+                      "expression": "`Fraud_Risk_Score`.`Mirror Checks`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Voided Value",
+                      "expression": "`Fraud_Risk_Score`.`Voided Value`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Night Voids",
+                      "expression": "`Fraud_Risk_Score`.`Night Voids`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Flag Void Rate",
+                      "expression": "`Fraud_Risk_Score`.`Flag Void Rate`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Flag Free Items",
+                      "expression": "`Fraud_Risk_Score`.`Flag Free Items`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Flag Mirror",
+                      "expression": "`Fraud_Risk_Score`.`Flag Mirror`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Flag Amount",
+                      "expression": "`Fraud_Risk_Score`.`Flag Amount`"
+                    },
+                    {
+                      "name": "Fraud_Risk_Score__Flag Night Voids",
+                      "expression": "`Fraud_Risk_Score`.`Flag Night Voids`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Employee Risk Score Detail",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Fraud_Risk_Score__employee_id",
+                    "displayName": "Employee ID"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__location_id",
+                    "displayName": "Location ID"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Risk Level",
+                    "displayName": "Risk Level"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__risk_score",
+                    "displayName": "Risk Score"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Void Rate",
+                    "displayName": "Void Rate"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Free Item Rate",
+                    "displayName": "Free Item Rate"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Mirror Checks",
+                    "displayName": "Mirror Checks"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Voided Value",
+                    "displayName": "Voided Value"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Night Voids",
+                    "displayName": "Night Voids"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Flag Void Rate",
+                    "displayName": "Flag Void Rate"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Flag Free Items",
+                    "displayName": "Flag Free Items"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Flag Mirror",
+                    "displayName": "Flag Mirror"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Flag Amount",
+                    "displayName": "Flag Amount"
+                  },
+                  {
+                    "fieldName": "Fraud_Risk_Score__Flag Night Voids",
+                    "displayName": "Flag Night Voids"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "detailed_investigation",
+      "displayName": "Detailed Investigation",
+      "layout": [
+        {
+          "widget": {
+            "name": "table_checks_most_voids",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Checks_With_Most_Voids__check_id",
+                      "expression": "`Checks_With_Most_Voids`.`check_id`"
+                    },
+                    {
+                      "name": "Checks_With_Most_Voids__location_id",
+                      "expression": "`Checks_With_Most_Voids`.`location_id`"
+                    },
+                    {
+                      "name": "Checks_With_Most_Voids__employee_id",
+                      "expression": "`Checks_With_Most_Voids`.`employee_id`"
+                    },
+                    {
+                      "name": "Checks_With_Most_Voids__Items Voided",
+                      "expression": "`Checks_With_Most_Voids`.`Items Voided`"
+                    },
+                    {
+                      "name": "Checks_With_Most_Voids__Voided Value",
+                      "expression": "`Checks_With_Most_Voids`.`Voided Value`"
+                    },
+                    {
+                      "name": "Checks_With_Most_Voids__First Order",
+                      "expression": "`Checks_With_Most_Voids`.`First Order`"
+                    },
+                    {
+                      "name": "Checks_With_Most_Voids__Last Order",
+                      "expression": "`Checks_With_Most_Voids`.`Last Order`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Checks With Most Voids",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Checks_With_Most_Voids__check_id",
+                    "displayName": "Check ID"
+                  },
+                  {
+                    "fieldName": "Checks_With_Most_Voids__location_id",
+                    "displayName": "Location ID"
+                  },
+                  {
+                    "fieldName": "Checks_With_Most_Voids__employee_id",
+                    "displayName": "Employee ID"
+                  },
+                  {
+                    "fieldName": "Checks_With_Most_Voids__Items Voided",
+                    "displayName": "Items Voided"
+                  },
+                  {
+                    "fieldName": "Checks_With_Most_Voids__Voided Value",
+                    "displayName": "Voided Value"
+                  },
+                  {
+                    "fieldName": "Checks_With_Most_Voids__First Order",
+                    "displayName": "First Order"
+                  },
+                  {
+                    "fieldName": "Checks_With_Most_Voids__Last Order",
+                    "displayName": "Last Order"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "table_mirror_pattern",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__check_id",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`check_id`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__location_id",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`location_id`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__employee_id",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`employee_id`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Items Voided",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Items Voided`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Items Sold",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Items Sold`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Voided Value",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Voided Value`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Sold Value",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Sold Value`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Void Rate",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Void Rate`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Mirror Items",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Mirror Items`"
+                    },
+                    {
+                      "name": "Voids_vs_Sold_Mirror_Pattern__Mirror Pattern",
+                      "expression": "`Voids_vs_Sold_Mirror_Pattern`.`Mirror Pattern`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Mirror Pattern Checks (Void + Resell)",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__check_id",
+                    "displayName": "Check ID"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__location_id",
+                    "displayName": "Location ID"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__employee_id",
+                    "displayName": "Employee ID"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Items Voided",
+                    "displayName": "Items Voided"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Items Sold",
+                    "displayName": "Items Sold"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Voided Value",
+                    "displayName": "Voided Value"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Sold Value",
+                    "displayName": "Sold Value"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Void Rate",
+                    "displayName": "Void Rate"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Mirror Items",
+                    "displayName": "Mirror Items"
+                  },
+                  {
+                    "fieldName": "Voids_vs_Sold_Mirror_Pattern__Mirror Pattern",
+                    "displayName": "Mirror Pattern"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "table_free_items",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Suspicious_Free_Items__check_id",
+                      "expression": "`Suspicious_Free_Items`.`check_id`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__location_name",
+                      "expression": "`Suspicious_Free_Items`.`location_name`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__location_status",
+                      "expression": "`Suspicious_Free_Items`.`location_status`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__Total Items",
+                      "expression": "`Suspicious_Free_Items`.`Total Items`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__Free Items",
+                      "expression": "`Suspicious_Free_Items`.`Free Items`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__Free Items Pct",
+                      "expression": "`Suspicious_Free_Items`.`Free Items Pct`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__Q1 Free",
+                      "expression": "`Suspicious_Free_Items`.`Q1 Free`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__Q3 Free",
+                      "expression": "`Suspicious_Free_Items`.`Q3 Free`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__IQR",
+                      "expression": "`Suspicious_Free_Items`.`IQR`"
+                    },
+                    {
+                      "name": "Suspicious_Free_Items__IQR Threshold",
+                      "expression": "`Suspicious_Free_Items`.`IQR Threshold`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Suspicious Free Items (IQR Outliers)",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Suspicious_Free_Items__check_id",
+                    "displayName": "Check ID"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__location_name",
+                    "displayName": "Location"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__location_status",
+                    "displayName": "Location Status"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__Total Items",
+                    "displayName": "Total Items"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__Free Items",
+                    "displayName": "Free Items"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__Free Items Pct",
+                    "displayName": "Free Items Pct"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__Q1 Free",
+                    "displayName": "Q1 Free"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__Q3 Free",
+                    "displayName": "Q3 Free"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__IQR",
+                    "displayName": "IQR"
+                  },
+                  {
+                    "fieldName": "Suspicious_Free_Items__IQR Threshold",
+                    "displayName": "IQR Threshold"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 6,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "table_pipeline_log",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Pipeline_Run_Log__run_id",
+                      "expression": "`Pipeline_Run_Log`.`run_id`"
+                    },
+                    {
+                      "name": "Pipeline_Run_Log__run_timestamp",
+                      "expression": "`Pipeline_Run_Log`.`run_timestamp`"
+                    },
+                    {
+                      "name": "Pipeline_Run_Log__status",
+                      "expression": "`Pipeline_Run_Log`.`status`"
+                    },
+                    {
+                      "name": "Pipeline_Run_Log__queries_executed",
+                      "expression": "`Pipeline_Run_Log`.`queries_executed`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Pipeline Execution Log",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Pipeline_Run_Log__run_id"
+                  },
+                  {
+                    "fieldName": "Pipeline_Run_Log__run_timestamp"
+                  },
+                  {
+                    "fieldName": "Pipeline_Run_Log__status"
+                  },
+                  {
+                    "fieldName": "Pipeline_Run_Log__queries_executed"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 7,
+            "width": 6,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#EBEBEB",
+        "dark": "#0D1117"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FCFCFD",
+        "dark": "#161B22"
+      },
+      "widgetBorderColor": {
+        "light": "#FCFCFD",
+        "dark": "#161B22"
+      },
+      "fontColor": {
+        "light": "#65C406",
+        "dark": "#65C406"
+      },
+      "selectionColor": {
+        "light": "#2272B4",
+        "dark": "#F0883E"
+      },
+      "visualizationColors": [
+        "#15AFDD",
+        "#2375A8",
+        "#52A870",
+        "#C85070",
+        "#C89930",
+        "#E74C3C",
+        "#9B59B6",
+        "#F39C12"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "Roboto Mono",
+      "widgetPadding": 16,
+      "widgetMargin": 4,
+      "widgetCornerRadius": 0,
+      "widgetShadow": 0,
+      "continuousGradient": {
+        "lightMode": {
+          "fromCategoricalIndex": 0
+        },
+        "darkMode": {
+          "fromCategoricalIndex": 0
+        }
+      },
+      "fontSettings": {
+        "base": {
+          "fontFamily": "Inter",
+          "fontColor": {
+            "light": "#08141A",
+            "dark": "#C9D1D9"
+          },
+          "fontSize": 14,
+          "fontWeight": 400
+        },
+        "widgetTitle": {
+          "fontFamily": "Inter",
+          "fontColor": {
+            "light": "#08141A",
+            "dark": "#F0F6FC"
+          },
+          "fontSize": 15,
+          "fontWeight": 600
+        },
+        "widgetDescription": {
+          "fontSize": 13,
+          "fontWeight": 400
+        },
+        "fieldTitle": {
+          "fontFamily": "Inter",
+          "textCase": "TEXT_CASE_UPPERCASE",
+          "fontColor": {
+            "light": "#08141A",
+            "dark": "#8B949E"
+          },
+          "fontSize": 12,
+          "fontWeight": 500
+        },
+        "fieldValue": {
+          "fontFamily": "Inter",
+          "fontColor": {
+            "light": "#08141A",
+            "dark": "#C9D1D9"
+          },
+          "fontSize": 12,
+          "fontWeight": 400
+        }
+      },
+      "gridLineColor": {
+        "light": "#D0D7DE",
+        "dark": "#21262D"
+      },
+      "axisLineColor": {
+        "light": "#D0D7DE",
+        "dark": "#30363D"
+      },
+      "visualizationColorMappings": [
+        {
+          "value": "CRITICAL",
+          "color": "#B71C1C"
+        },
+        {
+          "value": "HIGH",
+          "color": "#E74C3C"
+        },
+        {
+          "value": "MEDIUM",
+          "color": "#F39C12"
+        },
+        {
+          "value": "LOW",
+          "color": "#52A870"
+        },
+        {
+          "value": "CRITICO",
+          "color": "#B71C1C"
+        },
+        {
+          "value": "ALTO",
+          "color": "#E74C3C"
+        },
+        {
+          "value": "MEDIO",
+          "color": "#F39C12"
+        },
+        {
+          "value": "BAJO",
+          "color": "#52A870"
+        }
+      ]
+    },
+    "applyModeEnabled": false
+  }
+}
