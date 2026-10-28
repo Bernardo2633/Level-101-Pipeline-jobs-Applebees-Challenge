@@ -1,0 +1,22 @@
+resources:
+  jobs:
+    fraud_detection_pipeline:
+      name: ${var.job_name}
+      description: >-
+        Pipeline de deteccion de fraude Applebees: 9 queries sobre voids y items
+        gratis (N/C) que materializan 9 tablas Delta en workspace.pipe + log de
+        ejecucion. Se activa automaticamente cuando la tabla fuente
+        workspace.applebees_clean.applebees_checks_items es actualizada.
+      trigger:
+        pause_status: UNPAUSED
+        table_update:
+          table_names:
+            - workspace.applebees_clean.applebees_checks_items
+      max_concurrent_runs: 1
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
+      tasks:
+        - task_key: fraud_detection_pipeline
+          notebook_task:
+            notebook_path: ../src/fraud_pipeline.ipynb

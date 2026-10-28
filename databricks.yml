@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=bundle_config_schema.json
+bundle:
+  name: applebees-fraud-detection
+
+include:
+  - resources/*.yml
+
+variables:
+  job_name:
+    description: "Nombre del job del pipeline de deteccion de fraude"
+    default: "Applebees Fraud Detection Pipeline"
+
+targets:
+  dev:
+    mode: development
+    default: true
+
+  prod:
+    mode: production
