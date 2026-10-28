@@ -68,7 +68,7 @@ To view job runs and their output, use `databricks bundle run fraud_detection_pi
 ## Quick Access Links
 
 * **Pipeline Notebook (in this repo):** [src/fraud_pipeline.ipynb](src/fraud_pipeline.ipynb) — or in the workspace: [Applebees Fraud Detection Pipeline (repo)](https://dbc-2ba908fb-5780.cloud.databricks.com/editor/notebooks/3404623558211856?o=7474644077067624)
-* **Fraud Dashboard (AI/BI):** [Applebees Fraud Monitoring Dashboard](https://dbc-2ba908fb-5780.cloud.databricks.com/dashboards/01f1d18475bb173ab326708be9dd46e0?o=7474644077067624) — 3 pages, 15 widgets over the `workspace.pipe` tables
+* **Fraud Dashboard (AI/BI):** [Applebees Fraud Monitoring Dashboard](https://dbc-2ba908fb-5780.cloud.databricks.com/sql/dashboardsv3/01f1d18475bb173ab326708be9dd46e0?o=7474644077067624) — 3 pages, 15 widgets over the `workspace.pipe` tables
 * **Legacy job (pre-bundle):** [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/jobs/939665523087168?o=7474644077067624) — original job with identical trigger; will be replaced by the bundle-deployed job
 * **GitHub Repository:** [Bernardo2633/Level-101-Pipeline-jobs-Applebees-Challenge](https://github.com/Bernardo2633/Level-101-Pipeline-jobs-Applebees-Challenge)
 
