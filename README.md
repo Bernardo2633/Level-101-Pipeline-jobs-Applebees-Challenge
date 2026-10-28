@@ -1,34 +1,88 @@
 # Level-101-Pipeline-jobs-Applebees-Challenge
-Pipeline &amp; Jobs code for team Level 101
-%md
-# Applebees Fraud Detection Pipeline
+
+Pipeline & Jobs code for team Level 101 — Applebees fraud detection on Databricks, managed as a **Declarative Automation Bundle (DAB)**.
 
 ## Project Overview
-This repository contains a Databricks pipeline for fraud detection in Applebees restaurant data, including scheduled jobs for daily and main executions.
+
+This repository contains the Applebees fraud detection pipeline. The pipeline runs **9 SQL queries** that analyze *voids* (item cancellations) and *free items (N/C)* across 28.5M transactions (115 days), and materializes the results as Delta tables in the `workspace.pipe` schema.
+
+The job is triggered automatically by a **table update trigger** on `workspace.applebees_clean.applebees_checks_items` (no cron): every time the source table is updated, the pipeline runs.
+
+## Repo Structure
+
+```text
+├── databricks.yml                  # Bundle root: name, variables, dev/prod targets
+├── resources/
+│   └── fraud_detection.job.yml     # Job definition: notebook task + table_update trigger
+└── src/
+    └── fraud_pipeline.ipynb        # Notebook: 9 fraud queries + run log + verification
+```
+
+## Data Architecture
+
+**Input** (`workspace.applebees_clean` schema):
+
+| Table | Description |
+| --- | --- |
+| `applebees_checks_items` | 28.5M transactional items, 115 days (2026-04-28 to 2026-08-20) |
+| `applebees_items` | Menu catalog: 16,697 items |
+| `applebees_locations` | 185 restaurants (127 Active, 58 Closed) |
+
+**Output** (`workspace.pipe` schema):
+
+| Table | Contents |
+| --- | --- |
+| `fraud_voids_by_employee` | Voids per employee × location, with void rate and sold volume |
+| `fraud_voids_by_location` | Voids per location (Active only), with relative rate |
+| `fraud_voids_by_hour` | Voids per hour of day vs. sales volume |
+| `fraud_top_voided_items` | Most voided items, with void/sold ratio |
+| `fraud_checks_most_voids` | Checks with 3+ voided items |
+| `fraud_voids_vs_sold` | Checks with voids vs. sold + mirror pattern flag (same item voided AND sold in one check) |
+| `fraud_free_items_suspicious` | Checks with statistically unusual N/C items (IQR threshold: Q3 + 1.5·IQR) |
+| `fraud_weekly_summary` | Weekly summary with top employee and top location |
+| `fraud_risk_score` | Multivariate scoring per employee × location (IQR + weights: void_rate 33, N/C 28, mirror 22, amount 17). Levels: CRITICO ≥60, ALTO ≥40, MEDIO ≥20, BAJO <20 |
+| `fraud_pipeline_run_log` | Execution log (run_id, timestamp, status, queries executed) |
+
+## How to Deploy
+
+Requirements: Databricks CLI with workspace access.
+
+```bash
+# Validate the configuration
+databricks bundle validate --target dev
+
+# Deploy to dev (job prefixed with "[dev <user>]" and paused trigger, for testing)
+databricks bundle deploy --target dev
+
+# Deploy to prod (final job, active trigger)
+databricks bundle deploy --target prod
+```
+
+**Dev vs. prod:**
+
+* `dev` (development): creates a user-scoped job (`[dev a01738023] Applebees Fraud Detection Pipeline`) with the trigger **paused** — ideal for experimental changes without affecting production.
+* `prod` (production): creates the final job `Applebees Fraud Detection Pipeline` with the trigger **active** on `workspace.applebees_clean.applebees_checks_items`.
+
+To view job runs and their output, use `databricks bundle run fraud_detection_pipeline --target <target>` or the Jobs link below.
 
 ## Quick Access Links
 
-- **Pipeline Notebook:**  
-  [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/editor/notebooks/1977624990523801?o=7474644077067624)
+* **Pipeline Notebook (in this repo):** [src/fraud_pipeline.ipynb](src/fraud_pipeline.ipynb) — or in the workspace: [Applebees Fraud Detection Pipeline (repo)](https://dbc-2ba908fb-5780.cloud.databricks.com/editor/notebooks/3404623558211856?o=7474644077067624)
+* **Fraud Dashboard (AI/BI):** [Applebees Fraud Monitoring Dashboard](https://dbc-2ba908fb-5780.cloud.databricks.com/dashboards/01f1d18475bb173ab326708be9dd46e0?o=7474644077067624) — 3 pages, 15 widgets over the `workspace.pipe` tables
+* **Legacy job (pre-bundle):** [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/jobs/939665523087168?o=7474644077067624) — original job with identical trigger; will be replaced by the bundle-deployed job
+* **GitHub Repository:** [Bernardo2633/Level-101-Pipeline-jobs-Applebees-Challenge](https://github.com/Bernardo2633/Level-101-Pipeline-jobs-Applebees-Challenge)
 
-- **Main Job:**  
-  [Applebees Fraud Detection Pipeline](https://dbc-2ba908fb-5780.cloud.databricks.com/jobs/939665523087168?o=7474644077067624)
+## Dashboard
 
-- **Daily Job:**  
-  [Applebees Fraud Detection Pipeline — Daily](https://dbc-2ba908fb-5780.cloud.databricks.com/jobs/726070220803235?o=7474644077067624)
+The **Applebees Fraud Monitoring Dashboard** consumes the tables generated by this pipeline:
 
-- **Public GitHub Repository:**  
-  [https://github.com/Bernardo2633/Level-101-Pipeline-jobs-Applebees-Challenge](https://github.com/Bernardo2633/Level-101-Pipeline-jobs-Applebees-Challenge)
+1. **Executive Overview** — KPIs (total voided value, high-risk employees, mirror pattern checks), weekly trend, voids by hour, top voided items
+2. **Risk Analysis** — voids by employee and location, risk score table
+3. **Detailed Investigation** — checks with most voids, mirror pattern, suspicious N/C items, pipeline log
 
-## How to Use
+## Roadmap
 
-1. **Explore the Pipeline Notebook:**  
-   Open the notebook link to view the detailed logic, exploratory analyses, and data quality checks for fraud detection.
-
-2. **Run the Jobs:**  
-   Use the job links to schedule or manually execute the pipeline and daily tasks in Databricks.  
-   - Main Job: full pipeline execution  
-   - Daily Job: automatic daily monitoring
-
-3. **View Code & Documentation:**  
-   All processing logic, SQL queries, and instructions can be found in this GitHub repository.
+* Expand detection: void-then-re-ring, serial voiders, post-midnight voids
+* Improve execution log (failure capture, per-query duration)
+* Rename schema `workspace.pipe` to `workspace.applebees_fraud_detection`
+* Migrate the dashboard into the bundle as a repo resource
